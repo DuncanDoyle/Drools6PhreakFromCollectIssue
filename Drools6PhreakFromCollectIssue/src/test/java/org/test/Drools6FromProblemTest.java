@@ -22,25 +22,20 @@ public class Drools6FromProblemTest {
 	private static final String RULE_FILENAME = "defaultKBase/TestFromRules.drl";
 
 	@Test
-	public void startTestReteoo() throws InterruptedException {
+	public void testReteoo() throws InterruptedException {
 		KieSession ksession = initSession(false);
-		for (int i = 0; i < 4; i++) {
-			ksession.insert(new SimpleFact("id" + i));
-		}
-		ksession.fireAllRules();
-		assertEquals("all events should be in WM", 4, ksession.getFactCount());
-		Logger.getLogger(getClass()).debug("End of first insert");
-
-		ksession.insert(new SimpleFact("last"));
-		ksession.fireAllRules();
-		assertEquals("only one event should be still in WM", 1, ksession.getFactCount());
-
+		runTest(ksession);
 		ksession.dispose();
 	}
 
 	@Test
-	public void startTestPhreak() throws InterruptedException {
+	public void testPhreak() throws InterruptedException {
 		KieSession ksession = initSession(true);
+		runTest(ksession);
+		ksession.dispose();
+	}
+	
+	private void runTest(KieSession ksession) {
 		for (int i = 0; i < 4; i++) {
 			ksession.insert(new SimpleFact("id" + i));
 		}
@@ -51,9 +46,8 @@ public class Drools6FromProblemTest {
 		ksession.insert(new SimpleFact("last"));
 		ksession.fireAllRules();
 		assertEquals("only one event should be still in WM", 1, ksession.getFactCount());
-
-		ksession.dispose();
 	}
+
 
 	protected KieSession initSession(boolean phreakMode) {
 		KieServices ks = KieServices.Factory.get();
