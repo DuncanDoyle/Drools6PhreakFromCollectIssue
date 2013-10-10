@@ -1,0 +1,27 @@
+package org.test
+
+import org.test.SimpleFact;
+import java.util.List;
+
+declare SimpleFact
+    @role( event )
+end
+
+rule "Rule1"
+    when
+        event : SimpleFact( status == 0 )
+        list: List(size < 4) from collect( SimpleFact(this != event, status==1, this before event) )
+    then
+        event.setStatus(1);
+        update(event);
+    end
+
+rule "Rule2"
+    when
+        event : SimpleFact( status == 0 )
+        list: List(size >= 4) from collect( SimpleFact(this != event, status==1, this before event) )
+    then
+        for (Object ev2: new java.util.LinkedList(list)) retract(ev2);
+        event.setStatus(2);
+        update(event);
+    end
